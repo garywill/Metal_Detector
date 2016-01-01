@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //Erstelle den MagnetHandler
-        try {
+        try
+        {
             MagneticSensor ms = new MagneticSensor(this);
         }
         catch(Exception e) //Fehlerauswertung, wenn kein Manget vorhanden ist
