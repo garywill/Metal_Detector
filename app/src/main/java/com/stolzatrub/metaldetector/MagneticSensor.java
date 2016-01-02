@@ -12,8 +12,16 @@ import android.widget.TextView;
  */
 public class MagneticSensor implements SensorEventListener //Implementing Listener to react to value changes
 {
+    //These variables store sample information
+    private int takensamples = 0;
+    private double[] samplearr = new double[25];
+    private boolean samplestate = true; //Collect Samples?
+    private double average = 0.00; //Average
+
+    //Sensor variables
     private SensorManager mSensorManager; //Sensormanager
     private Sensor mSensor; // Magnetic Sensor
+
     TextView outputtext; // <- Experimental Code
 
     /*
@@ -29,8 +37,17 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     @Override
     public void onSensorChanged(SensorEvent event)
     {
+        //Calculate Microtesla from Sensor
         double magnitude = Math.sqrt(Math.pow(event.values[0],2)+Math.pow(event.values[1],2)+Math.pow(event.values[2],2));
-        outputtext.setText(""+magnitude); // <- Experimental Code
+
+        //Calculate Average?
+        if(samplestate)
+        {
+            calculateAverage(magnitude);
+        }
+
+        //Testoutput
+        outputtext.setText("Magnitude:"+magnitude+" Average:"+average+"\n Taken Samples: "+takensamples); // <- Experimental Code
     }
 
     @Override
@@ -38,6 +55,47 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     {
         ;
     }
+
+    /*
+    * Calculate the average of 25 samples to calibrate the searching algorithm. May increase samplesize later
+    */
+    public void calculateAverage(double sample)
+    {
+        if(takensamples >= samplearr.length)
+        {
+            samplestate = false;
+            for(double x : samplearr)
+            {
+                average += x;
+            }
+            average = average/samplearr.length;
+        }
+        else
+        {
+            samplearr[takensamples] = sample;
+            takensamples++;
+        }
+    }
+
+    /*
+    * Recalibrate and start calculating the average again on next SensorEvent
+    */
+    public void recalibrateSensor()
+    {
+        samplestate = true;
+        takensamples = 0;
+        average = 0.00;
+    }
+
+    /*
+    * This method compares sample data and looks for anomalies (high values, low values). This indicates the
+    * presence of ferromagnetic material or interfering fields (powerlines)
+    */
+    public void searchAnomolies()
+    {
+        ;
+    }
+
     /*
     * (Un)registering Method
     */
