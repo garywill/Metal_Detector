@@ -17,6 +17,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     private double[] samplearr = new double[25];
     private boolean samplestate = true; //Collect Samples?
     private double average = 0.00; //Average
+    private double deviation = 0.00;
 
     //Sensor variables
     private SensorManager mSensorManager; //Sensormanager
@@ -45,9 +46,14 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         {
             calculateAverage(magnitude);
         }
+        else
+        {
+            //searchAnomalies(magnitude);
+        }
 
         //Testoutput
-        outputtext.setText("Magnitude:"+magnitude+" Average:"+average+"\n Taken Samples: "+takensamples); // <- Experimental Code
+        outputtext.setText("Magnitude:"+magnitude+"\nAverage:"+average+"\nTaken Samples: "+takensamples+
+                "\nDeviation:"+ deviation); // <- Experimental Code
     }
 
     @Override
@@ -91,9 +97,28 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     * This method compares sample data and looks for anomalies (high values, low values). This indicates the
     * presence of ferromagnetic material or interfering fields (powerlines)
     */
-    public void searchAnomolies()
+    public void searchAnomalies(double sample)
     {
-        ;
+        //Calculate the deviation
+        deviation = sample - average;
+        int devceiled =  (int) Math.abs(deviation);
+        //TODO
+        if(devceiled > 5 )
+        {
+            if(devceiled > 10)
+            {
+                if(devceiled > 15)
+                {
+                    //That's a clear anomaly
+                    //But let's check if it's only a sampling error (take a few testsamples maybe 5)
+                }
+                //That is most certainly an anomaly
+                //Take a few testsamples to verify maybe 10
+            }
+            //This could be a misreading, as the sensors are quite sensitive (maybe the user changed the angle of the device)
+            //Take further steps to verify
+        }
+
     }
 
     /*
