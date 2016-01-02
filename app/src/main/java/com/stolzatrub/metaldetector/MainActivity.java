@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private Button startbutton;
+    private boolean on = false;
+    private MagneticSensor msensor;
+
     /*
     * Will run, when App starts up
     */
@@ -25,23 +28,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Initalize startbutton
-        startbutton = (Button) findViewById(R.id.startbutton);
-        startbutton.setOnClickListener(new View.OnClickListener()
-        {
-            //OnClick Eventhandler. No Support Lambda Expressions :(
-            @Override
-            public void onClick(View v)
-            {
-                TextView outputtext = (TextView) findViewById(R.id.outputtext);
-                outputtext.setText("It works");
-            }
-        });
-
         //Create Magnetic Sensor, catch Error
         try
         {
-            MagneticSensor msensor = new MagneticSensor(this);
+            msensor = new MagneticSensor(this,(TextView) findViewById(R.id.outputtext)); // <- Experimental Code
         }
         catch(Exception e) //Errorhandling
         {
@@ -50,6 +40,29 @@ public class MainActivity extends AppCompatActivity {
             fehler.setPositiveButton("OK",null);
             fehler.show();
         }
+
+        //Initalize startbutton
+        startbutton = (Button) findViewById(R.id.startbutton);
+        startbutton.setOnClickListener(new View.OnClickListener()
+        {
+            //OnClick Eventhandler, Experimental Code
+            @Override
+            public void onClick(View v)
+            {
+                if(on)
+                {
+                    msensor.unregister();
+                    startbutton.setText("Start Reading");
+                    on = false;
+                }
+                else
+                {
+                    msensor.register();
+                    startbutton.setText("Stop Reading");
+                    on = true;
+                }
+            }
+        });
 
     }
 
