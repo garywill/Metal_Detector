@@ -17,9 +17,11 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     private double[] samplearr = new double[25];
     private boolean samplestate = true; //Collect Samples?
     private double average = 0.00; //Average
+
+    //These variables are used in the detecting algorithm
     private double deviation = 0.00;
 
-    //Sensor variables
+    //These variables handle the sensor
     private SensorManager mSensorManager; //Sensormanager
     private Sensor mSensor; // Magnetic Sensor
 
@@ -48,7 +50,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         }
         else
         {
-            //searchAnomalies(magnitude);
+            //searchForAnomalies(magnitude);
         }
 
         //Testoutput
@@ -97,7 +99,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     * This method compares sample data and looks for anomalies (high values, low values). This indicates the
     * presence of ferromagnetic material or interfering fields (powerlines)
     */
-    public void searchAnomalies(double sample)
+    public void searchForAnomalies(double sample)
     {
         //Calculate the deviation
         deviation = sample - average;
