@@ -7,13 +7,16 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 /**
- * Created by Florian on 01.01.2016.
+ * This class handles the Magnetic Sensor
  */
-public class MagneticSensor implements SensorEventListener
+public class MagneticSensor implements SensorEventListener //Implementing Listener to react to value changes
 {
-   private SensorManager mSensorManager;
-   private Sensor mSensor;
+   private SensorManager mSensorManager; //Sensormanager
+   private Sensor mSensor; // Magnetic Sensor
 
+    /*
+    * Constructor, initializes the Sensor. Might throw Exception, if sensor does not exist (?)
+    */
     public MagneticSensor(Context pContext) throws Exception
     {
         mSensorManager = (SensorManager) pContext.getSystemService(Context.SENSOR_SERVICE);
@@ -30,8 +33,11 @@ public class MagneticSensor implements SensorEventListener
     public void onAccuracyChanged(Sensor sensor, int accuracy)
     {
         ;
-    }
+    } //Unused
 
+    /*
+    * (Un)registering Method
+    */
     public void register()
     {
         mSensorManager.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_NORMAL);
