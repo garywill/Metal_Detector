@@ -20,6 +20,8 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
 
     //These variables are used in the detecting algorithm
     private double deviation = 0.00;
+    private int stage = 0;
+    private int streakcounter = 0;
 
     //These variables handle the sensor
     private SensorManager mSensorManager; //Sensormanager
@@ -42,6 +44,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     {
         //Calculate Microtesla from Sensor
         double magnitude = Math.sqrt(Math.pow(event.values[0],2)+Math.pow(event.values[1],2)+Math.pow(event.values[2],2));
+        int percentage = 0;
 
         //Calculate Average?
         if(samplestate)
@@ -50,12 +53,12 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         }
         else
         {
-            //searchForAnomalies(magnitude);
+            percentage = (int) searchForAnomalies(magnitude);
         }
 
         //Testoutput
         outputtext.setText("Magnitude:"+magnitude+"\nAverage:"+average+"\nTaken Samples: "+takensamples+
-                "\nDeviation:"+ deviation); // <- Experimental Code
+                "\nDeviation:"+ deviation+"\nLikelihood of Metal: "+percentage+"%"); // <- Experimental Code
     }
 
     @Override
@@ -99,26 +102,55 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     * This method compares sample data and looks for anomalies (high values, low values). This indicates the
     * presence of ferromagnetic material or interfering fields (powerlines)
     */
-    public void searchForAnomalies(double sample)
+    public double searchForAnomalies(double sample)
     {
         //Calculate the deviation
         deviation = sample - average;
         int devceiled =  (int) Math.abs(deviation);
-        //TODO
-        if(devceiled > 5 )
+
+        //Check for anomaly
+        if(devceiled > 15)
         {
-            if(devceiled > 10)
+            if(stage != 1)
             {
-                if(devceiled > 15)
-                {
-                    //That's a clear anomaly
-                    //But let's check if it's only a sampling error (take a few testsamples maybe 5)
-                }
-                //That is most certainly an anomaly
-                //Take a few testsamples to verify maybe 10
+                stage = 1;
+                streakcounter = 0;
             }
-            //This could be a misreading, as the sensors are quite sensitive (maybe the user changed the angle of the device)
-            //Take further steps to verify
+        }
+        else if(devceiled > 10)
+        {
+            if(stage != 2)
+            {
+                stage = 2;
+                streakcounter = 0;
+            }
+        }
+        else if (devceiled > 5)
+        {
+            if(stage != 1)
+            {
+                stage = 1;
+                streakcounter = 0;
+            }
+        }
+        else
+        {
+            stage = 0;
+            streakcounter = 0;
+            return 0.00;
+        }
+        streakcounter++;
+
+        //Calculate likelihood
+        double divisor = (double) (stage*5)/100;
+        double percentage = streakcounter/divisor;
+        if (percentage > 100)
+        {
+            return 100.00;
+        }
+        else
+        {
+            return percentage;
         }
 
     }
