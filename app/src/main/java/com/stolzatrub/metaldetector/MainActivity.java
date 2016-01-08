@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         }
         catch(Exception e) //Errorhandling
         {
-            AlertDialog.Builder fehler = new AlertDialog.Builder(this);
-            fehler.setMessage(e.toString());
-            fehler.setPositiveButton("OK",null);
-            fehler.show();
+            AlertDialog.Builder error= new AlertDialog.Builder(this);
+            error.setMessage(e.toString());
+            error.setPositiveButton("OK",null);
+            error.show();
         }
 
         //Initalize startbutton
