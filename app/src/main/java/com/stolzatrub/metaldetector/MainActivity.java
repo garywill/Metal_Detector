@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button startbutton;
     private boolean on = false;
     private MagneticSensor msensor;
+    private RotationHandler rhandler;
 
     /*
     * Will run, when App starts up
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             msensor = new MagneticSensor(this,(TextView) findViewById(R.id.outputtext)); // <- Experimental Code
+            rhandler = new RotationHandler(this, (TextView) findViewById(R.id.vectortext)); //<- Experimental Rotationhandler
         }
         catch(Exception e) //Errorhandling
         {
@@ -55,12 +57,16 @@ public class MainActivity extends AppCompatActivity {
                     msensor.unregister();
                     startbutton.setText("Start Reading");
                     on = false;
+
+                    rhandler.unregister(); //<- Experimental Code
                 }
                 else
                 {
                     msensor.register();
                     startbutton.setText("Stop Reading");
                     on = true;
+
+                    rhandler.register(); //<- Experimental Code
                 }
             }
         });
