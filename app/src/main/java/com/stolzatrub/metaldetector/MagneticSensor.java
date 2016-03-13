@@ -29,14 +29,18 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
 
     TextView outputtext; // <- Experimental Code
 
+    private boolean advancedmode = false;
+    TextView advancedoutputtext;
+
     /*
     * Constructor, initializes the Sensor. Might throw Exception, if sensor does not exist (?)
     */
-    public MagneticSensor(Context pContext, TextView outputtext) throws Exception
+    public MagneticSensor(Context pContext, TextView outputtext, TextView advancedoutputtext) throws Exception
     {
         mSensorManager = (SensorManager) pContext.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         this.outputtext = outputtext; // <- Experimental Code
+        this.advancedoutputtext = advancedoutputtext;
     }
 
     @Override
@@ -50,15 +54,21 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         if(samplestate)
         {
             calculateAverage(magnitude);
+            outputtext.setText("Recalibrating");
         }
         else
         {
             percentage = (int) searchForAnomalies(magnitude);
+            outputtext.setText("Likelihood of Metal: "+percentage+"%");
         }
 
         //Testoutput
-        outputtext.setText("Magnitude:"+magnitude+"\nAverage:"+average+"\nTaken Samples: "+takensamples+
+        //outputtext.setText("Likelihood of Metal: "+percentage+"%");
+        if(advancedmode) {
+        advancedoutputtext.setText("Magnitude:"+magnitude+"\nAverage:"+average+"\nTaken Samples: "+takensamples+
                 "\nDeviation:"+ deviation+"\nLikelihood of Metal: "+percentage+"%"); // <- Experimental Code
+
+        }
     }
 
     @Override
@@ -153,6 +163,19 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
             return percentage;
         }
 
+    }
+
+    public void toggleAdvanced()
+    {
+        if(advancedmode)
+        {
+            advancedmode = false;
+            advancedoutputtext.setText("");
+        }
+        else
+        {
+            advancedmode = true;
+        }
     }
 
     /*

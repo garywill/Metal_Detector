@@ -16,14 +16,25 @@ public class RotationHandler implements SensorEventListener {
     private Sensor mSensor;
     private TextView outputtext;
 
+    private double verticalAveragearr[] = new double[25];
+    private double horizontalAveragearr[] = new double[25];
+    private double verticalAverage = 0.00;
+    private double horizontalAverage = 0.00;
+    private int samplesize = 0;
+    private boolean calibrated = false;
+    private double vertical = 0.00;
+    private double horizontal = 0.00;
+    private MagneticSensor mhandler = null;
+
     float[] mGravity; //Placeholder
     float[] mGeomagnetic; //Placeholder
-    public RotationHandler(Context pContext,TextView outputtext) throws Exception
+    public RotationHandler(Context pContext,TextView outputtext, MagneticSensor mhandler) throws Exception
     {
         rSensorManager = (SensorManager) pContext.getSystemService(Context.SENSOR_SERVICE);
         aSensor = rSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensor = rSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         this.outputtext = outputtext; // <- Experimental Code
+        this.mhandler = mhandler;
     }
 
 
@@ -47,8 +58,59 @@ public class RotationHandler implements SensorEventListener {
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                outputtext.setText("" + orientation[0] + "\n" + orientation[1] + "\n" + orientation[2]);
+                if(calibrated)
+                {
+                    vertical = Math.abs((Math.abs(orientation[1]) - Math.abs(verticalAverage)));
+                    horizontal = Math.abs((Math.abs(orientation[2]) - Math.abs(horizontalAverage)));
+                    if(vertical > 0.6)
+                    {
+                        recalibrate();
+                        mhandler.recalibrateSensor();
+                    }
+                    if(horizontal > 1.5)
+                    {
+                        recalibrate();
+                        mhandler.recalibrateSensor();
+                    }
+                }
+                else
+                {
+                    calibrate(orientation[1], orientation[2]);
+                }
+                //outputtext.setText("" + calibrated + "\n" + orientation[1] + "\n" + verticalAverage);
             }
+        }
+    }
+
+    public void recalibrate()
+    {
+        calibrated = false;
+        verticalAverage = 0.00;
+        horizontalAverage = 0.00;
+        samplesize = 0;
+    }
+
+    public void calibrate(double vertical, double horizontal)
+    {
+        if (samplesize >= verticalAveragearr.length)
+        {
+            calibrated = true;
+            for(double x : verticalAveragearr)
+            {
+                verticalAverage += x;
+            }
+            verticalAverage = verticalAverage / verticalAveragearr.length;
+            for(double x : horizontalAveragearr)
+            {
+                horizontalAverage= x;
+            }
+            horizontalAverage = horizontalAverage / verticalAveragearr.length;
+        }
+        else
+        {
+            verticalAveragearr[samplesize] = vertical;
+            horizontalAveragearr[samplesize] = horizontal;
+            samplesize++;
         }
     }
 

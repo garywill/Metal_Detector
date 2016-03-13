@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         //Create Magnetic Sensor, catch Error
         try
         {
-            msensor = new MagneticSensor(this,(TextView) findViewById(R.id.outputtext)); // <- Experimental Code
-            rhandler = new RotationHandler(this, (TextView) findViewById(R.id.vectortext)); //<- Experimental Rotationhandler
+            msensor = new MagneticSensor(this,(TextView) findViewById(R.id.outputtext), (TextView) findViewById(R.id.advancedtex)); // <- Experimental Code
+            rhandler = new RotationHandler(this, (TextView) findViewById(R.id.vectortext),msensor); //<- Experimental Rotationhandler
         }
         catch(Exception e) //Errorhandling
         {
@@ -54,16 +55,20 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(on)
                 {
+                    ImageView searchgif = (ImageView) findViewById(R.id.imageView);
+                    searchgif.setImageResource(R.drawable.nosearch);
                     msensor.unregister();
-                    startbutton.setText("Start Reading");
+                    startbutton.setText("Start Metal Detection");
                     on = false;
 
                     rhandler.unregister(); //<- Experimental Code
                 }
                 else
                 {
+                    ImageView searchgif = (ImageView) findViewById(R.id.imageView);
                     msensor.register();
-                    startbutton.setText("Stop Reading");
+                    searchgif.setImageResource(R.drawable.search);
+                    startbutton.setText("Stop Metal Detection");
                     on = true;
 
                     rhandler.register(); //<- Experimental Code
@@ -89,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.recalibrate:
                 msensor.recalibrateSensor();
+                return true;
+            case R.id.mode:
+                msensor.toggleAdvanced();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

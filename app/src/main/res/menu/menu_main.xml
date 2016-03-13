@@ -7,4 +7,9 @@
         android:orderInCategory="100"
         android:title="Recalibrate"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/mode"
+        android:orderInCategory="100"
+        android:title="Advanced Mode"
+        app:showAsAction="never" />
 </menu>

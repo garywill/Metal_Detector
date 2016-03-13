@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.stolzatrub.metaldetector.MainActivity"
     tools:showIn="@layout/activity_main">
@@ -17,25 +18,49 @@
         android:layout_height="wrap_content"
         android:text="Not Reading yet"
         android:id="@+id/outputtext"
-        android:keepScreenOn="false" />
+        android:textColor="#FFFFFF"
+        android:textSize="24dp"
+        android:keepScreenOn="false"
+        android:layout_marginTop="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Reading"
+        android:text="Start Metal Detection"
         android:id="@+id/startbutton"
-        android:layout_below="@+id/outputtext"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="35dp" />
+        android:layout_marginBottom="42dp"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rotation Vector Test Reading"
+        android:text=""
         android:id="@+id/vectortext"
-        android:layout_marginBottom="107dp"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/outputtext"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="100dp" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/nosearch"
+        android:layout_gravity="right"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/advancedtex"
+        android:textColor="#FFFFFF"
+        android:textSize="12dp"
+        android:layout_below="@+id/startbutton"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
