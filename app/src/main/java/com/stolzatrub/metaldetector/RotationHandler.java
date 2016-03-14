@@ -1,6 +1,8 @@
 package com.stolzatrub.metaldetector;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,6 +13,8 @@ import android.widget.TextView;
  * This class monitors the angle the device and interrupts the main application if necessary
  */
 public class RotationHandler implements SensorEventListener {
+    private Context pContext = null;
+
     private SensorManager rSensorManager;
     private Sensor aSensor;
     private Sensor mSensor;
@@ -26,15 +30,22 @@ public class RotationHandler implements SensorEventListener {
     private double horizontal = 0.00;
     private MagneticSensor mhandler = null;
 
-    float[] mGravity; //Placeholder
-    float[] mGeomagnetic; //Placeholder
+    private boolean warning = false;
+
+    float[] mGravity;
+    float[] mGeomagnetic;
     public RotationHandler(Context pContext,TextView outputtext, MagneticSensor mhandler) throws Exception
     {
         rSensorManager = (SensorManager) pContext.getSystemService(Context.SENSOR_SERVICE);
         aSensor = rSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensor = rSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if(mSensor == null || aSensor == null)
+        {
+            throw new SensorException("No Magnetic Sensor/Accelerometer available");
+        }
         this.outputtext = outputtext; // <- Experimental Code
         this.mhandler = mhandler;
+        this.pContext = pContext;
     }
 
 
@@ -66,11 +77,13 @@ public class RotationHandler implements SensorEventListener {
                     {
                         recalibrate();
                         mhandler.recalibrateSensor();
+                        showWarning();
                     }
                     if(horizontal > 1.5)
                     {
                         recalibrate();
                         mhandler.recalibrateSensor();
+                        showWarning();
                     }
                 }
                 else
@@ -111,6 +124,25 @@ public class RotationHandler implements SensorEventListener {
             verticalAveragearr[samplesize] = vertical;
             horizontalAveragearr[samplesize] = horizontal;
             samplesize++;
+        }
+    }
+
+    public void showWarning()
+    {
+        if(!warning)
+        {
+            AlertDialog.Builder warningmess= new AlertDialog.Builder(pContext);
+            warningmess.setMessage("It seems like you have rotated or tilted your phone.\nThis can cause false readings, therefore a recalibration is needed" +
+                    "!\nYou can also use this for fast recalibration.");
+            warningmess.setPositiveButton("Don't show again", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    recalibrate();
+                    mhandler.recalibrateSensor();
+                }
+            });
+            warningmess.show();
+            warning = true;
         }
     }
 

@@ -2,6 +2,7 @@ package com.stolzatrub.metaldetector;
 
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -98,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mode:
                 msensor.toggleAdvanced();
                 return true;
+            case R.id.tutorial:
+                showTutorial();
+                return true;
+            case R.id.options:
+                showOptions();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -110,5 +117,40 @@ public class MainActivity extends AppCompatActivity {
         }
         */
         //return super.onOptionsItemSelected(item);
+    }
+
+    public void showTutorial()
+    {
+        String help="How to use this app:\n\n" +
+                "Hold your phone away from the object you want test. Then click \"start\" or \"recalibrate\".\n" +
+                "After starting the reading, get closer to the object. Avoid shaking/tilting, this will cause auto-recalibration.\n" +
+                "Recalibrate before using it for a different object.";
+        AlertDialog.Builder tutorial= new AlertDialog.Builder(this);
+        tutorial.setMessage(help);
+        tutorial.setPositiveButton("OK",null);
+        tutorial.show();
+    }
+
+    public void showOptions()
+    {
+        String optext="This menu enables you to set the sensitivity of the metal detector a bit lower," +
+                "if you think the sensitivity is too high.";
+        AlertDialog.Builder options= new AlertDialog.Builder(this);
+        options.setMessage(optext);
+        options.setPositiveButton("Lower Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                msensor.setSensitivity(true);
+                msensor.recalibrateSensor();
+            }
+        });
+        options.setNegativeButton("Normal Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                msensor.setSensitivity(false);
+                msensor.recalibrateSensor();
+            }
+        });
+        options.show();
     }
 }

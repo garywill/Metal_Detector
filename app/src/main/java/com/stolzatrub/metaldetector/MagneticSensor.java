@@ -22,6 +22,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     private double deviation = 0.00;
     private int stage = 0;
     private int streakcounter = 0;
+    private int sensitivity = 5; //default = 5 , lower = 10
 
     //These variables handle the sensor
     private SensorManager mSensorManager; //Sensormanager
@@ -39,6 +40,10 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
     {
         mSensorManager = (SensorManager) pContext.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if(mSensor == null)
+        {
+            throw new SensorException("No Magnetic Sensor available!");
+        }
         this.outputtext = outputtext; // <- Experimental Code
         this.advancedoutputtext = advancedoutputtext;
     }
@@ -66,7 +71,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         //outputtext.setText("Likelihood of Metal: "+percentage+"%");
         if(advancedmode) {
         advancedoutputtext.setText("Magnitude:"+magnitude+"\nAverage:"+average+"\nTaken Samples: "+takensamples+
-                "\nDeviation:"+ deviation+"\nLikelihood of Metal: "+percentage+"%"); // <- Experimental Code
+                "\nDeviation:"+ deviation); // <- Experimental Code
 
         }
     }
@@ -119,7 +124,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         int devceiled =  (int) Math.abs(deviation);
 
         //Check for anomaly
-        if(devceiled > 15)
+        if(devceiled > (sensitivity*3))
         {
             if(stage != 1)
             {
@@ -127,7 +132,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
                 streakcounter = 0;
             }
         }
-        else if(devceiled > 10)
+        else if(devceiled > (sensitivity*2))
         {
             if(stage != 2)
             {
@@ -135,7 +140,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
                 streakcounter = 0;
             }
         }
-        else if (devceiled > 5)
+        else if (devceiled > (sensitivity))
         {
             if(stage != 1)
             {
@@ -152,7 +157,7 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         streakcounter++;
 
         //Calculate likelihood
-        double divisor = (double) (stage*5)/100;
+        double divisor = (double) (stage*10)/100;
         double percentage = streakcounter/divisor;
         if (percentage > 100)
         {
@@ -175,6 +180,18 @@ public class MagneticSensor implements SensorEventListener //Implementing Listen
         else
         {
             advancedmode = true;
+        }
+    }
+
+    public void setSensitivity(boolean lower)
+    {
+        if(lower)
+        {
+            sensitivity = 10;
+        }
+        else
+        {
+            sensitivity = 5;
         }
     }
 

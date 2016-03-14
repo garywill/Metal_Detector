@@ -10,6 +10,17 @@
     <item
         android:id="@+id/mode"
         android:orderInCategory="100"
-        android:title="Advanced Mode"
+        android:title="Toggle Advanced Mode"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tutorial"
+        android:orderInCategory="100"
+        android:title="Help"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/options"
+        android:orderInCategory="100"
+        android:title="Advanced Options"
         app:showAsAction="never" />
 </menu>
